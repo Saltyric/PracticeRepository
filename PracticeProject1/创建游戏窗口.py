@@ -23,7 +23,16 @@ screen.blit(hero, (200, 500))
 pygame.display.update()
 
 while True:
-    pygame.event.get(1000)
+    for event in pygame.event.get():
+        #   判断用户是否点击了关闭按钮
+        if event.type == pygame.QUIT:
+            print("退出游戏")
+
+            #   quit卸载所以模块
+            pygame.quit()
+
+            #   退出系统
+            exit()
 
 
 #   结束

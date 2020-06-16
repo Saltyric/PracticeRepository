@@ -29,6 +29,26 @@ while True:
     #   可以在循环体内部的代码执行的频率
     clock.tick(60)
 
+    #   捕获事件
+    # event_list = pygame.event.get()
+
+    #   事件监听
+    for event in pygame.event.get():
+        #   判断用户是否点击了关闭按钮
+        if event.type == pygame.QUIT:
+            print("退出游戏")
+
+            #   quit卸载所以模块
+            pygame.quit()
+
+            #   退出系统
+            exit()
+        elif event.type == 'a':
+            hero_rect.x -= 10
+
+    # if len(event_list) > 0:
+    #     print(event_list)
+
     #   修改飞机位置
     hero_rect.y -= 5
 
@@ -43,5 +63,5 @@ while True:
     pygame.display.update()
 
 #   结束
-pygame.quit()
+# pygame.quit()
 
