@@ -26,6 +26,10 @@ class PlanGame(object):
         #   创建敌机精灵与精灵组
         self.enemy_group = pygame.sprite.Group()
 
+        #   创建英雄精灵与精灵组
+        self.hero = Hero()
+        self.hero_group = pygame.sprite.Group(self.hero)
+
     def start_game(self):
         print("游戏开始...")
         while True:
@@ -51,9 +55,27 @@ class PlanGame(object):
                 print("敌机出场...")
                 #   创建敌机精灵
                 enemy = Enemy()
-
                 #   将敌机精灵添加到敌机精灵组
                 self.enemy_group.add(enemy)
+            # elif event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
+            #     print("向右移动")
+        #   使用键盘提供的方法获取键盘按键 - 按键元组
+        key_press = pygame.key.get_pressed()
+        if key_press[pygame.K_RIGHT] and self.hero.rect.x <= (SCREEN_RECT.width - self.hero.rect.width):
+            # print("向右移动")
+            self.hero.speed = 2
+        elif key_press[pygame.K_LEFT] and self.hero.rect.x >= 0:
+            self.hero.speed = -2
+        elif key_press[pygame.K_UP] and self.hero.rect.y >= 350:
+            self.hero.speed2 = -3
+        elif key_press[pygame.K_DOWN] and self.hero.rect.y <= 500:
+            self.hero.speed2 = 2
+        else:
+            self.hero.speed = 0
+            self.hero.speed2 = 0
+
+        if self.hero.speed2 == 0 and self.hero.rect.y <= 500:
+            self.hero.rect.y += 1
 
     def __check_collide(self):
         pass
@@ -64,6 +86,9 @@ class PlanGame(object):
 
         self.enemy_group.update()
         self.enemy_group.draw(self.screen)
+
+        self.hero_group.update()
+        self.hero_group.draw(self.screen)
 
     @staticmethod
     def __game_over():
