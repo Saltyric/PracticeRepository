@@ -1,9 +1,6 @@
 import pygame
 from plane_sprites import *
 
-#   屏幕大小的常量
-SCREEN_RECT = pygame.Rect(0, 0, 480, 700)
-
 
 class PlanGame(object):
     """飞机大战主游戏"""
@@ -19,21 +16,47 @@ class PlanGame(object):
         self.__create_sprites()
 
     def __create_sprites(self):
-        pass
+        #   创建背景精灵与精灵组
+        bg1 = Background("./images/background.png")
+        bg2 = Background("./images/background.png")
+        bg2.rect.y = -bg2.rect.height
+        self.back_ground = pygame.sprite.Group(bg1, bg2)
 
     def start_game(self):
         print("游戏开始...")
         while True:
-            for event in pygame.event.get():
-                #   判断用户是否点击了关闭按钮
-                if event.type == pygame.QUIT:
-                    print("退出游戏")
+            #   设置刷新帧率
+            self.clock.tick(FRAME_PER_SECOND)
+            #   事件监听
+            self.__event_handler()
+            #   碰撞检测
+            self.__check_collide()
+            #   更新/绘制精灵组
+            self.__update_sprites()
+            #   更新显示
+            pygame.display.update()
 
-                    #   quit卸载所以模块
-                    pygame.quit()
+    def __event_handler(self):
 
-                    #   退出系统
-                    exit()
+        for event in pygame.event.get():
+            #   判断是否退出游戏
+            if event.type == pygame.QUIT:
+                PlanGame.__game_over()
+                # self.__game_over()
+
+    def __check_collide(self):
+        pass
+
+    def __update_sprites(self):
+        self.back_ground.update()
+        self.back_ground.draw(self.screen)
+
+    @staticmethod
+    def __game_over():
+        print("游戏结束")
+
+        pygame.quit()
+        exit()
 
 
 if __name__ == '__main__':
