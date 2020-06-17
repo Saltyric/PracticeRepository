@@ -105,6 +105,7 @@ class Hero(GameSprite):
     def fire(self):
         # print("发射子弹")
 
+        #   子弹三连发实现
         for i in (0, 1, 2):
             #   创建子弹精灵
             bullet = Bullet()

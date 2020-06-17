@@ -88,6 +88,14 @@ class PlanGame(object):
         #   子弹摧毁敌机
         pygame.sprite.groupcollide(self.hero.bullets, self.enemy_group, True, True)
 
+        #   敌机撞毁英雄
+        enemies = pygame.sprite.spritecollide(self.hero, self.enemy_group, True)
+
+        #   判断列表enemies是否有内容
+        if len(enemies) > 0:
+            self.hero.kill()
+            self.__game_over()
+
     def __update_sprites(self):
         self.back_ground.update()
         self.back_ground.draw(self.screen)
