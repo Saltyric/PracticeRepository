@@ -24,6 +24,7 @@ class PlanGame(object):
         #   设置定时器事件 -创建敌机&子弹
         pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
         pygame.time.set_timer(HERO_FIRE_EVENT, 500)
+        self.score = 0
 
     def __create_sprites(self):
         #   创建背景精灵与精灵组
@@ -74,6 +75,11 @@ class PlanGame(object):
             #   使用空格切换两种攻击模式
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self.hero.bullets_mod = not self.hero.bullets_mod
+            #   press B to ANLA-AHM-AKBAR!!!!
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_b:
+                # self.hero.destroied()
+                for enemies in self.enemy_group.sprites():
+                    enemies.destroied()
 
         #   使用键盘提供的方法获取键盘按键 - 按键元组
         if key_press[pygame.K_RIGHT]:
@@ -104,7 +110,7 @@ class PlanGame(object):
 
     def __check_collide(self):
         #   子弹摧毁敌机
-        enemies = pygame.sprite.groupcollide(self.enemy_group, self.hero.bullets, False, True)
+        enemies = pygame.sprite.groupcollide(self.enemy_group, self.hero.bullets, True, True)
 
         for enemy in enemies:
             enemy.life -= 1
@@ -112,12 +118,15 @@ class PlanGame(object):
             if enemy.life <= 0:
                 enemy.add(self.destroy_group)
                 enemy.remove(self.enemy_group)
+                self.score += 1
+                print("Score: %d" % self.score)
 
             enemy.destroied()
 
         #   敌机撞毁英雄
         for hero in pygame.sprite.spritecollide(self.hero, self.enemy_group, True):
             self.hero.life -= 1
+            print("Life remains: %d" % self.hero.life)
 
             if self.hero.life <= 0:
                 print("Aircraft Crashed!!")

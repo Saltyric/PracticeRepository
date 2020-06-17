@@ -163,7 +163,7 @@ class Hero(PlaneSprite):
 
         #   设定英雄初始位置
         self.rect.centerx = SCREEN_RECT.centerx
-        self.rect.bottom = SCREEN_RECT.bottom - 120
+        self.rect.bottom = SCREEN_RECT.bottom
         self.speed2 = 0
 
         #   创建子弹的精灵组
