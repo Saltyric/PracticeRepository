@@ -7,6 +7,8 @@ SCREEN_RECT = pygame.Rect(0, 0, 480, 700)
 FRAME_PER_SECOND = 60
 #   创建敌机的定时器常量
 CREATE_ENEMY_EVENT = pygame.USEREVENT
+#   英雄发射子弹事件
+HERO_FIRE_EVENT = pygame.USEREVENT + 1
 
 
 class GameSprite(pygame.sprite.Sprite):
@@ -82,6 +84,9 @@ class Hero(GameSprite):
         self.rect.bottom = SCREEN_RECT.bottom - 120
         self.speed2 = 0
 
+        #   创建子弹的精灵组
+        self.bullets = pygame.sprite.Group()
+
     def update(self):
         #   英雄在水平方向移动
         self.rect.x += self.speed
@@ -90,25 +95,44 @@ class Hero(GameSprite):
         #   控制英雄不能离开屏幕
         if self.rect.x < 0:
             self.rect.x = 0
-        elif self.rect.x > SCREEN_RECT.width - self.rect.width:
-            self.rect.x = SCREEN_RECT.width - self.rect.width
-        elif self.rect.y > SCREEN_RECT.height - self.rect.height:
-            self.rect.y = SCREEN_RECT.height - self.rect.height
+        elif self.rect.right > SCREEN_RECT.right:
+            self.rect.right = SCREEN_RECT.right
+        elif self.rect.bottom > SCREEN_RECT.bottom:
+            self.rect.bottom = SCREEN_RECT.bottom
         elif self.rect.y < 350:
             self.rect.y = 350
 
     def fire(self):
-        pass
+        # print("发射子弹")
+
+        for i in (0, 1, 2):
+            #   创建子弹精灵
+            bullet = Bullet()
+            bullet2 = Bullet()
+            #   设置精灵位置
+            bullet.rect.bottom = self.rect.y + i * 25
+            bullet.rect.centerx = self.rect.centerx - 32
+
+            bullet2.rect.bottom = self.rect.y + i * 25
+            bullet2.rect.centerx = self.rect.centerx + 32
+            #   将精灵添加到子弹精灵组中
+            self.bullets.add(bullet, bullet2)
 
 
 class Bullet(GameSprite):
+    """子弹精灵"""
 
     def __init__(self):
         #   调用父类方法
-        super().__init__("./images/bullet1.png")
-        #   子弹初始
-        self.speed = -2
+        super().__init__("./images/bullet1.png", -5)
 
     def update(self):
+        #   调用父类方法，让子弹垂直飞行
         super().update()
-        self.rect.y += self.speed
+        #   判断子弹是否飞出屏幕
+        if self.rect.bottom < 0:
+            self.kill()
+
+    def __del__(self):
+        # print("子弹被销毁...")
+        pass

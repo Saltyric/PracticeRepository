@@ -16,6 +16,7 @@ class PlanGame(object):
         self.__create_sprites()
         #   设置定时器事件 -创建敌机  1s
         pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
+        pygame.time.set_timer(HERO_FIRE_EVENT, 500)
 
     def __create_sprites(self):
         #   创建背景精灵与精灵组
@@ -52,13 +53,16 @@ class PlanGame(object):
                 PlanGame.__game_over()
                 # self.__game_over()
             elif event.type == CREATE_ENEMY_EVENT:
-                print("敌机出场...")
+                # print("敌机出场...")
                 #   创建敌机精灵
                 enemy = Enemy()
                 #   将敌机精灵添加到敌机精灵组
                 self.enemy_group.add(enemy)
+            elif event.type == HERO_FIRE_EVENT:
+                self.hero.fire()
             # elif event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
             #     print("向右移动")
+
         #   使用键盘提供的方法获取键盘按键 - 按键元组
         key_press = pygame.key.get_pressed()
         if key_press[pygame.K_RIGHT]:
@@ -77,11 +81,12 @@ class PlanGame(object):
         #   位置自动调整
         if self.hero.speed2 == 0 and self.hero.rect.y < 500:
             self.hero.rect.y += 1
-        elif self.hero.speed2 == 0 and 500 < self.hero.rect.y < 720:
+        elif self.hero.speed2 == 0 and 500 < self.hero.rect.y < SCREEN_RECT.bottom:
             self.hero.rect.y -= 1
 
     def __check_collide(self):
-        pass
+        #   子弹摧毁敌机
+        pygame.sprite.groupcollide(self.hero.bullets, self.enemy_group, True, True)
 
     def __update_sprites(self):
         self.back_ground.update()
@@ -92,6 +97,9 @@ class PlanGame(object):
 
         self.hero_group.update()
         self.hero_group.draw(self.screen)
+
+        self.hero.bullets.update()
+        self.hero.bullets.draw(self.screen)
 
     @staticmethod
     def __game_over():
