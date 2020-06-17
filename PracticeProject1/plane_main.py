@@ -14,13 +14,17 @@ class PlanGame(object):
         self.clock = pygame.time.Clock()
         #   调用私有方法，精灵和精灵组的创建
         self.__create_sprites()
+        #   设置定时器事件 -创建敌机  1s
+        pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
 
     def __create_sprites(self):
         #   创建背景精灵与精灵组
-        bg1 = Background("./images/background.png")
-        bg2 = Background("./images/background.png")
-        bg2.rect.y = -bg2.rect.height
+        bg1 = Background()
+        bg2 = Background(True)
         self.back_ground = pygame.sprite.Group(bg1, bg2)
+
+        #   创建敌机精灵与精灵组
+        self.enemy_group = pygame.sprite.Group()
 
     def start_game(self):
         print("游戏开始...")
@@ -43,6 +47,13 @@ class PlanGame(object):
             if event.type == pygame.QUIT:
                 PlanGame.__game_over()
                 # self.__game_over()
+            elif event.type == CREATE_ENEMY_EVENT:
+                print("敌机出场...")
+                #   创建敌机精灵
+                enemy = Enemy()
+
+                #   将敌机精灵添加到敌机精灵组
+                self.enemy_group.add(enemy)
 
     def __check_collide(self):
         pass
@@ -50,6 +61,9 @@ class PlanGame(object):
     def __update_sprites(self):
         self.back_ground.update()
         self.back_ground.draw(self.screen)
+
+        self.enemy_group.update()
+        self.enemy_group.draw(self.screen)
 
     @staticmethod
     def __game_over():
