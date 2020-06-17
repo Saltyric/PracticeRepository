@@ -26,6 +26,13 @@ class GameSprite(pygame.sprite.Sprite):
         #   在屏幕的垂直方向移动
         self.rect.y += self.speed
 
+    @staticmethod
+    def image_names(prefix, count):
+        names = []
+        for i in range(1, count + 1):
+            names.append("./images/" + prefix + str(i) + ".png")
+        return names
+
 
 class Background(GameSprite):
     """游戏背景精灵"""
@@ -46,12 +53,79 @@ class Background(GameSprite):
             self.rect.y = -self.rect.height
 
 
-class Enemy(GameSprite):
+class PlaneSprite(GameSprite):
+
+    def __init__(self, image_names, destroy_names, life, speed):
+
+        image_name = image_names[0]
+        super().__init__(image_name, speed)
+
+        #   生命值
+        self.life = life
+
+        #   正常图像列表
+        self.__life_images = []
+        for file_name in image_names:
+            image = pygame.image.load(file_name)
+            self.__life_images.append(image)
+
+        #   被摧毁的图像列表
+        self.__destroy_images = []
+        for file_name in destroy_names:
+            image = pygame.image.load(file_name)
+            self.__destroy_images.append(image)
+
+        #   默认播放生存图像列表
+        self.images = self.__life_images
+        #   显示图像索引
+        self.show_image_index = 0
+        #   是否循环播放
+        self.is_loop_show = True
+        #   是否可以被删除
+        self.can_destroied = False
+
+    def update(self):
+        self.update_image()
+        super().update()
+
+    def update_image(self):
+        """更新图像"""
+
+        pre_index = int(self.show_image_index)
+        self.show_image_index += 0.05
+        count = len(self.images)
+
+        #   判断是否循环播放
+        if self.is_loop_show:
+            self.show_image_index %= len(self.images)
+        elif self.show_image_index > count - 1:
+            self.show_image_index = count - 1
+            self.can_destroied = True
+
+        current_index = int(self.show_image_index)
+
+        if pre_index != current_index:
+            self.image = self.images[current_index]
+
+    def destroied(self):
+        #   飞机摧毁
+
+        #   默认播放生存图片
+        self.images = self.__destroy_images
+        #   显示图像索引
+        self.show_image_index = 0
+        #   是否循环
+        self.is_loop_show = False
+
+
+class Enemy(PlaneSprite):
     """敌机精灵"""
 
     def __init__(self):
         #   调用父类方法，实现敌人的创建
-        super().__init__("./images/enemy1.png")
+        images_name = ["./images/enemy1.png"]
+        destroy_names = GameSprite.image_names("enemy1_down", 4)
+        super().__init__(images_name, destroy_names, 1, 1)
         #   指定敌机的初始随机速度
         self.speed = random.randint(1, 3)
         #   指定敌机的初始随机位置
@@ -68,17 +142,25 @@ class Enemy(GameSprite):
             #   kil方法可以将精灵从所以精灵组中移出，精灵会被自动销毁
             self.kill()
 
+        #   判断敌机是否已经销毁
+        if self.can_destroied:
+            self.kill()
+
     def __del__(self):
         # print("敌机消失 %s" % self.rect)\
         pass
 
 
-class Hero(GameSprite):
+class Hero(PlaneSprite):
     """英雄精灵"""
 
     def __init__(self):
         #   调用父类方法, 设置img&speed
-        super().__init__("./images/me1.png")
+        images_name = GameSprite.image_names("me", 2)
+        destroy_names = GameSprite.image_names("me_destroy_", 4)
+
+        super().__init__(images_name, destroy_names, 3, 0)
+
         #   设定英雄初始位置
         self.rect.centerx = SCREEN_RECT.centerx
         self.rect.bottom = SCREEN_RECT.bottom - 120
@@ -88,7 +170,9 @@ class Hero(GameSprite):
         self.bullets = pygame.sprite.Group()
 
     def update(self):
-        #   英雄在水平方向移动
+
+        self.update_image()
+        #   英雄的方向移动
         self.rect.x += self.speed
         self.rect.y += self.speed2
 
@@ -125,11 +209,12 @@ class Bullet(GameSprite):
 
     def __init__(self):
         #   调用父类方法
-        super().__init__("./images/bullet1.png", -5)
+        image_name = "./images/bullet1.png"
+        super().__init__(image_name, -5)
 
-    def update(self):
+    def update(self, *args):
         #   调用父类方法，让子弹垂直飞行
-        super().update()
+        super().update(*args)
         #   判断子弹是否飞出屏幕
         if self.rect.bottom < 0:
             self.kill()
