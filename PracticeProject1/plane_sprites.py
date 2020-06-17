@@ -168,6 +168,7 @@ class Hero(PlaneSprite):
 
         #   创建子弹的精灵组
         self.bullets = pygame.sprite.Group()
+        self.bullets_mod = False
 
     def update(self):
 
@@ -187,21 +188,30 @@ class Hero(PlaneSprite):
             self.rect.y = 350
 
     def fire(self):
-        # print("发射子弹")
 
-        #   子弹三连发实现
-        for i in (0, 1, 2):
-            #   创建子弹精灵
-            bullet = Bullet()
-            bullet2 = Bullet()
-            #   设置精灵位置
-            bullet.rect.bottom = self.rect.y + i * 25
-            bullet.rect.centerx = self.rect.centerx - 32
+        if self.bullets_mod:
 
-            bullet2.rect.bottom = self.rect.y + i * 25
-            bullet2.rect.centerx = self.rect.centerx + 32
-            #   将精灵添加到子弹精灵组中
-            self.bullets.add(bullet, bullet2)
+            #   子弹双联三连发模式
+            for i in (0, 1, 2):
+                #   创建子弹精灵
+                bullet = Bullet()
+                bullet2 = Bullet()
+                #   设置精灵位置
+                bullet.rect.bottom = self.rect.y + i * 25
+                bullet.rect.centerx = self.rect.centerx - 32
+
+                bullet2.rect.bottom = self.rect.y + i * 25
+                bullet2.rect.centerx = self.rect.centerx + 32
+
+                self.bullets.add(bullet, bullet2)
+            return
+
+        #   子弹单发模式
+        bullet3 = Bullet()
+        bullet3.rect.bottom = self.rect.y
+        bullet3.rect.centerx = self.rect.centerx
+
+        self.bullets.add(bullet3)
 
 
 class Bullet(GameSprite):

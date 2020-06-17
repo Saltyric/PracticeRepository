@@ -12,6 +12,11 @@ class PlanGame(object):
         self.screen = pygame.display.set_mode(SCREEN_RECT.size)
         #   设置程序标题
         pygame.display.set_caption("飞机大战 ———— By Saltyric")
+        #   设置bgm
+        pygame.mixer.init()
+        pygame.mixer.music.load("./Charge Assault.mp3")
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play(-1)
         #   创建游戏时钟
         self.clock = pygame.time.Clock()
         #   调用私有方法，精灵和精灵组的创建
@@ -51,6 +56,8 @@ class PlanGame(object):
 
     def __event_handler(self):
 
+        key_press = pygame.key.get_pressed()
+
         for event in pygame.event.get():
             #   判断是否退出游戏
             if event.type == pygame.QUIT:
@@ -64,11 +71,11 @@ class PlanGame(object):
                 self.enemy_group.add(Enemy())
             elif event.type == HERO_FIRE_EVENT:
                 self.hero.fire()
-            # elif event.type == pygame.KEYDOWN and event.key == pygame.K_RIGHT:
-            #     print("向右移动")
+            #   使用空格切换两种攻击模式
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                self.hero.bullets_mod = not self.hero.bullets_mod
 
         #   使用键盘提供的方法获取键盘按键 - 按键元组
-        key_press = pygame.key.get_pressed()
         if key_press[pygame.K_RIGHT]:
             # print("向右移动")
             self.hero.speed = 2
@@ -82,7 +89,10 @@ class PlanGame(object):
             self.hero.speed = 0
             self.hero.speed2 = 0
 
-        # 判断英雄是否已经被销毁，如果是，游戏结束！
+        # if key_press[pygame.K_SPACE]:
+        #     self.hero.fire()
+
+        # 判断英雄是否已经被销毁，如果是，游戏结束
         if self.hero.can_destroied:
             PlanGame.__game_over()
 
