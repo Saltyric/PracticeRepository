@@ -76,7 +76,7 @@ class Hero(GameSprite):
 
     def __init__(self):
         #   调用父类方法, 设置img&speed
-        super().__init__("./images/me1.png", 0)
+        super().__init__("./images/me1.png")
         #   设定英雄初始位置
         self.rect.centerx = SCREEN_RECT.centerx
         self.rect.bottom = SCREEN_RECT.bottom - 120
@@ -86,6 +86,16 @@ class Hero(GameSprite):
         #   英雄在水平方向移动
         self.rect.x += self.speed
         self.rect.y += self.speed2
+
+        #   控制英雄不能离开屏幕
+        if self.rect.x < 0:
+            self.rect.x = 0
+        elif self.rect.x > SCREEN_RECT.width - self.rect.width:
+            self.rect.x = SCREEN_RECT.width - self.rect.width
+        elif self.rect.y > SCREEN_RECT.height - self.rect.height:
+            self.rect.y = SCREEN_RECT.height - self.rect.height
+        elif self.rect.y < 350:
+            self.rect.y = 350
 
     def fire(self):
         pass

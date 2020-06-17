@@ -61,21 +61,24 @@ class PlanGame(object):
             #     print("向右移动")
         #   使用键盘提供的方法获取键盘按键 - 按键元组
         key_press = pygame.key.get_pressed()
-        if key_press[pygame.K_RIGHT] and self.hero.rect.x <= (SCREEN_RECT.width - self.hero.rect.width):
+        if key_press[pygame.K_RIGHT]:
             # print("向右移动")
             self.hero.speed = 2
-        elif key_press[pygame.K_LEFT] and self.hero.rect.x >= 0:
+        elif key_press[pygame.K_LEFT]:
             self.hero.speed = -2
-        elif key_press[pygame.K_UP] and self.hero.rect.y >= 350:
+        elif key_press[pygame.K_UP]:
             self.hero.speed2 = -3
-        elif key_press[pygame.K_DOWN] and self.hero.rect.y <= 500:
+        elif key_press[pygame.K_DOWN]:
             self.hero.speed2 = 2
         else:
             self.hero.speed = 0
             self.hero.speed2 = 0
 
-        if self.hero.speed2 == 0 and self.hero.rect.y <= 500:
+        #   位置自动调整
+        if self.hero.speed2 == 0 and self.hero.rect.y < 500:
             self.hero.rect.y += 1
+        elif self.hero.speed2 == 0 and 500 < self.hero.rect.y < 720:
+            self.hero.rect.y -= 1
 
     def __check_collide(self):
         pass
