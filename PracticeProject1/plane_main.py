@@ -1,6 +1,5 @@
 #!usr/bin/env python
 # *-*coding:utf-8*-*
-
 import pygame
 from plane_sprites import *
 
@@ -21,11 +20,8 @@ class PlanGame(object):
         #   设置程序标题
         pygame.display.set_caption("Ace Combat ———— By Saltyric")
 
-        #   设置bgm
+        #   初始化音乐
         pygame.mixer.init()
-        pygame.mixer.music.load("./Charge Assault.mp3")
-        pygame.mixer.music.set_volume(0.5)
-        pygame.mixer.music.play(-1)
 
         #   创建游戏时钟
         self.clock = pygame.time.Clock()
@@ -57,6 +53,7 @@ class PlanGame(object):
 
     def start_game(self):
         print("游戏开始...")
+        self.__bgm()
         while True:
             #   设置刷新帧率
             self.clock.tick(FRAME_PER_SECOND)
@@ -100,6 +97,8 @@ class PlanGame(object):
                 self.hero.destroied()
                 for enemies in self.enemy_group.sprites():
                     enemies.destroied()
+                for enemies_elite in self.enemy_elite_group.sprites():
+                    enemies_elite.destroied()
 
         #   使用键盘提供的方法获取键盘按键 - 按键元组
         if key_press[pygame.K_RIGHT]:
@@ -194,8 +193,9 @@ class PlanGame(object):
             pygame.display.update()
 
             for event in pygame.event.get():
-                print(event)
+
                 pygame.mixer.music.set_volume(0.2)
+
                 if event.type == pygame.QUIT:
                     self.__game_over()
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
@@ -213,6 +213,13 @@ class PlanGame(object):
         self.life_font.set_bold(True)
         self.life_text = self.score_font.render("Life: %d" % self.hero.life, True, (0, 0, 0))
         self.screen.blit(self.life_text, (0, 20))
+
+    @staticmethod
+    def __bgm():
+
+        pygame.mixer.music.load("./Charge Assault.mp3")
+        pygame.mixer.music.set_volume(0.4)
+        pygame.mixer.music.play(-1)
 
     @staticmethod
     def __game_over():
