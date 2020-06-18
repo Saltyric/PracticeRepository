@@ -5,10 +5,14 @@ import pygame
 SCREEN_RECT = pygame.Rect(0, 0, 480, 700)
 #   刷新屏幕帧率的常量
 FRAME_PER_SECOND = 60
-#   创建敌机的定时器常量
+#   创建普通敌机的定时器常量
 CREATE_ENEMY_EVENT = pygame.USEREVENT
 #   英雄发射子弹事件
 HERO_FIRE_EVENT = pygame.USEREVENT + 1
+#   创建精英敌机的定时器常量
+CREATE_ENEMY_ELITE_EVENT = pygame.USEREVENT + 2
+#   敌人发射子弹事件
+ENEMY_FIRE_EVENT = pygame.USEREVENT + 3
 
 
 class GameSprite(pygame.sprite.Sprite):
@@ -119,7 +123,7 @@ class PlaneSprite(GameSprite):
 
 
 class Enemy(PlaneSprite):
-    """敌机精灵"""
+    """普通敌机"""
 
     def __init__(self):
         #   调用父类方法，实现敌人的创建
@@ -146,9 +150,32 @@ class Enemy(PlaneSprite):
         if self.can_destroied:
             self.kill()
 
-    def __del__(self):
-        # print("敌机消失 %s" % self.rect)\
-        pass
+
+class EnemyElite(PlaneSprite):
+    """敌机精英"""
+
+    def __init__(self):
+        #   调用父类方法，实现敌人的创建
+        images_name = ["./images/enemy2.png"]
+        destroy_names = GameSprite.image_names("enemy2_down", 4)
+        super().__init__(images_name, destroy_names, 3, 1)
+        #   指定敌机的初始随机速度
+        self.speed = random.randint(1, 2)
+        #   指定敌机的初始随机位置
+        self.rect.bottom = 0
+        max_x = SCREEN_RECT.width - self.rect.width
+        self.rect.x = random.randint(0, max_x)
+
+    def update(self):
+        #   调用父类方法实现 保持垂直飞行
+        super().update()
+        #   判断是否飞出屏幕，如果是，需要从精灵组删除
+        if self.rect.y >= SCREEN_RECT.height:
+            self.kill()
+
+        #   判断敌机是否已经销毁
+        if self.can_destroied:
+            self.kill()
 
 
 class Hero(PlaneSprite):
@@ -208,7 +235,7 @@ class Hero(PlaneSprite):
             return
 
         #   子弹单发模式
-        pygame.time.set_timer(HERO_FIRE_EVENT, 200)
+        pygame.time.set_timer(HERO_FIRE_EVENT, 150)
         bullet3 = Bullet()
         bullet3.rect.bottom = self.rect.y
         bullet3.rect.centerx = self.rect.centerx
@@ -217,7 +244,7 @@ class Hero(PlaneSprite):
 
 
 class Bullet(GameSprite):
-    """子弹精灵"""
+    """英雄子弹"""
 
     def __init__(self):
         #   调用父类方法
@@ -231,6 +258,19 @@ class Bullet(GameSprite):
         if self.rect.bottom < 0:
             self.kill()
 
-    def __del__(self):
-        # print("子弹被销毁...")
-        pass
+
+class EnemyBullet(GameSprite):
+    """敌人子弹"""
+
+    def __init__(self, x, y):
+        image_name = "./images/bullet2.png"
+        super().__init__(image_name, 2)
+
+        self.rect.centerx = x
+        self.rect.y = y
+
+    def update(self, *args):
+        super().update()
+
+        if self.rect.bottom > SCREEN_RECT.bottom:
+            self.kill()

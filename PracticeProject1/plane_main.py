@@ -34,7 +34,9 @@ class PlanGame(object):
 
         #   设置定时器事件 -创建敌机
         pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
+        pygame.time.set_timer(CREATE_ENEMY_ELITE_EVENT, 5000)
         pygame.time.set_timer(HERO_FIRE_EVENT, 200)
+        pygame.time.set_timer(ENEMY_FIRE_EVENT, 3000)
 
     def __create_sprites(self):
         #   创建背景精灵与精灵组
@@ -44,6 +46,8 @@ class PlanGame(object):
 
         #   创建敌机精灵与精灵组
         self.enemy_group = pygame.sprite.Group()
+        self.enemy_elite_group = pygame.sprite.Group()
+        self.enemy_bullet_group = pygame.sprite.Group()
 
         #   创建英雄精灵与精灵组
         self.hero = Hero()
@@ -70,20 +74,21 @@ class PlanGame(object):
     def __event_handler(self):
 
         key_press = pygame.key.get_pressed()
-
         for event in pygame.event.get():
             #   判断是否退出游戏
             if event.type == pygame.QUIT:
                 PlanGame.__game_over()
                 # self.__game_over()
             elif event.type == CREATE_ENEMY_EVENT:
-                # print("敌机出场...")
-                #   创建敌机精灵
-                # enemy = Enemy()
-                #   将敌机精灵添加到敌机精灵组
+                #   创建敌机
                 self.enemy_group.add(Enemy())
+            elif event.type == CREATE_ENEMY_ELITE_EVENT:
+                self.enemy_elite_group.add(EnemyElite())
             elif event.type == HERO_FIRE_EVENT:
                 self.hero.fire()
+            elif event.type == ENEMY_FIRE_EVENT:
+                for each in self.enemy_elite_group:
+                    self.enemy_bullet_group.add(EnemyBullet(each.rect.centerx, each.rect.bottom))
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.pause = True
                 self.__game_pause()
@@ -125,7 +130,7 @@ class PlanGame(object):
 
     def __check_collide(self):
         #   子弹摧毁敌机
-        enemies = pygame.sprite.groupcollide(self.enemy_group, self.hero.bullets, True, True)
+        enemies = pygame.sprite.groupcollide(self.enemy_group, self.hero.bullets, False, True)
 
         for enemy in enemies:
             enemy.life -= 1
@@ -137,38 +142,43 @@ class PlanGame(object):
 
             enemy.destroied()
 
+        elite = pygame.sprite.groupcollide(self.enemy_elite_group, self.hero.bullets, False, True)
+
+        for enemy2 in elite:
+            enemy2.life -= 1
+
+            if enemy2.life <= 0:
+                enemy2.add(self.destroy_group)
+                enemy2.remove(self.enemy_elite_group)
+                self.score += 3
+            enemy2.destroied()
+
+        #   判断子弹是否对撞
+        pygame.sprite.groupcollide(self.hero.bullets, self.enemy_bullet_group, True, True)
+
         #   敌机撞毁英雄
-        for hero in pygame.sprite.spritecollide(self.hero, self.enemy_group, True):
+        for hit in pygame.sprite.spritecollide(self.hero, self.enemy_group, True):
             self.hero.life -= 1
 
             if self.hero.life <= 0:
                 print("Aircraft Crashed!!")
                 self.hero.destroied()
 
-        #   判断列表enemies是否有内容
-        # if len(hero_crash) > 0:
-        #     self.hero.add(self.destroy_group)
-        #     self.hero.destroied()
-        #     self.__game_over()
+        for hit2 in pygame.sprite.spritecollide(self.hero, self.enemy_bullet_group, True):
+            self.hero.life -= 1
+
+            if self.hero.life <= 0:
+                self.hero.destroied()
 
     def __update_sprites(self):
-        # self.back_ground.update()
-        # self.back_ground.draw(self.screen)
-        #
-        # self.enemy_group.update()
-        # self.enemy_group.draw(self.screen)
-        #
-        # self.hero_group.update()
-        # self.hero_group.draw(self.screen)
-        #
-        # self.hero.bullets.update()
-        # self.hero.bullets.draw(self.screen)
 
         for group in [self.back_ground,
                       self.enemy_group,
+                      self.enemy_elite_group,
                       self.hero_group,
                       self.hero.bullets,
-                      self.destroy_group]:
+                      self.destroy_group,
+                      self.enemy_bullet_group]:
             group.update()
             group.draw(self.screen)
 
@@ -195,10 +205,12 @@ class PlanGame(object):
     def __text_display(self):
         #   文本更新实现
         self.score_font = pygame.font.SysFont("comicsansms", 20)
+        self.score_font.set_bold(True)
         self.score_text = self.score_font.render("Score: %d" % self.score, True, (0, 0, 0))
         self.screen.blit(self.score_text, (0, 0))
 
         self.life_font = pygame.font.SysFont("comicsansms", 20)
+        self.life_font.set_bold(True)
         self.life_text = self.score_font.render("Life: %d" % self.hero.life, True, (0, 0, 0))
         self.screen.blit(self.life_text, (0, 20))
 
