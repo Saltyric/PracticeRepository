@@ -190,6 +190,7 @@ class Hero(PlaneSprite):
     def fire(self):
 
         if self.bullets_mod:
+            pygame.time.set_timer(HERO_FIRE_EVENT, 600)
 
             #   子弹双联三连发模式
             for i in (0, 1, 2):
@@ -207,6 +208,7 @@ class Hero(PlaneSprite):
             return
 
         #   子弹单发模式
+        pygame.time.set_timer(HERO_FIRE_EVENT, 200)
         bullet3 = Bullet()
         bullet3.rect.bottom = self.rect.y
         bullet3.rect.centerx = self.rect.centerx
