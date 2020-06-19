@@ -16,9 +16,11 @@ CREATE_ENEMY_ELITE_EVENT = pygame.USEREVENT + 2
 #   敌人发射子弹事件
 ENEMY_FIRE_EVENT = pygame.USEREVENT + 3
 
+COLOR_WHITE = (0, 0, 0)
+
 
 class GameSprite(pygame.sprite.Sprite):
-    """飞机大战游戏精灵"""
+    """皇牌空战？？"""
 
     def __init__(self, image_name, speed=1):
         #   调用父类的初始化方法

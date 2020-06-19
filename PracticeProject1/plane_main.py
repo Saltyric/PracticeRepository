@@ -5,7 +5,7 @@ from plane_sprites import *
 
 
 class PlanGame(object):
-    """飞机大战主游戏"""
+    """皇牌空战？？主游戏"""
 
     def __init__(self):
         print("游戏初始化")
@@ -18,7 +18,7 @@ class PlanGame(object):
         #   创建游戏窗口
         self.screen = pygame.display.set_mode(SCREEN_RECT.size)
         #   设置程序标题
-        pygame.display.set_caption("Ace Combat ———— By Saltyric")
+        pygame.display.set_caption("Ace Combat？？ ———— By Saltyric")
 
         #   初始化音乐
         pygame.mixer.init()
@@ -31,7 +31,7 @@ class PlanGame(object):
         #   设置定时器事件 -创建敌机
         pygame.time.set_timer(CREATE_ENEMY_EVENT, 1000)
         pygame.time.set_timer(CREATE_ENEMY_ELITE_EVENT, 5000)
-        pygame.time.set_timer(HERO_FIRE_EVENT, 200)
+        pygame.time.set_timer(HERO_FIRE_EVENT, 150)
         pygame.time.set_timer(ENEMY_FIRE_EVENT, 3000)
 
     def __create_sprites(self):
@@ -85,8 +85,8 @@ class PlanGame(object):
                 self.hero.fire()
             elif event.type == ENEMY_FIRE_EVENT:
                 for each in self.enemy_elite_group:
-                    for i in (0, 15, 30):
-                        self.enemy_bullet_group.add(EnemyBullet(each.rect.centerx, each.rect.bottom+i))
+                    for i in (0, 1, 2):
+                        self.enemy_bullet_group.add(EnemyBullet(each.rect.centerx, each.rect.bottom+i*15))
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.pause = True
                 self.__game_pause()
@@ -102,14 +102,14 @@ class PlanGame(object):
                     enemies_elite.destroied()
 
         #   使用键盘提供的方法获取键盘按键 - 按键元组
-        if key_press[pygame.K_RIGHT]:
+        if key_press[pygame.K_RIGHT] or key_press[pygame.K_d]:
             # print("向右移动")
             self.hero.speed = 2
-        elif key_press[pygame.K_LEFT]:
+        elif key_press[pygame.K_LEFT] or key_press[pygame.K_a]:
             self.hero.speed = -2
-        elif key_press[pygame.K_UP]:
+        elif key_press[pygame.K_UP] or key_press[pygame.K_w]:
             self.hero.speed2 = -3
-        elif key_press[pygame.K_DOWN]:
+        elif key_press[pygame.K_DOWN] or key_press[pygame.K_s]:
             self.hero.speed2 = 2
         else:
             self.hero.speed = 0
@@ -201,13 +201,17 @@ class PlanGame(object):
         #   文本更新实现
         self.score_font = pygame.font.SysFont("comicsansms", 20)
         self.score_font.set_bold(True)
-        self.score_text = self.score_font.render("Score: %d" % self.score, True, (0, 0, 0))
+        self.score_text = self.score_font.render("Score: %d" % self.score, True, COLOR_WHITE)
         self.screen.blit(self.score_text, (0, 0))
 
         self.life_font = pygame.font.SysFont("comicsansms", 20)
         self.life_font.set_bold(True)
-        self.life_text = self.score_font.render("Life: %d" % self.hero.life, True, (0, 0, 0))
+        self.life_text = self.score_font.render("Life: %d" % self.hero.life, True, COLOR_WHITE)
         self.screen.blit(self.life_text, (0, 20))
+
+        self.help_font = pygame.font.SysFont("comicsansms", 20)
+        self.help_text = self.help_font.render("Press (P) Pause", True, COLOR_WHITE)
+        self.screen.blit(self.help_text, (0, SCREEN_RECT.bottom-30))
 
     @staticmethod
     def __bgm():
