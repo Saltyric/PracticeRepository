@@ -18,6 +18,10 @@ ENEMY_FIRE_EVENT = pygame.USEREVENT + 3
 
 COLOR_WHITE = (0, 0, 0)
 
+PAUSE_IMAGE = "./images/again.png"
+
+RESTART = False
+
 
 class GameSprite(pygame.sprite.Sprite):
     """皇牌空战？？"""

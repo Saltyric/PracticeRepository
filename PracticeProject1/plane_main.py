@@ -22,6 +22,7 @@ class PlanGame(object):
 
         #   初始化音乐
         pygame.mixer.init()
+        self.__bgm()
 
         #   创建游戏时钟
         self.clock = pygame.time.Clock()
@@ -53,7 +54,6 @@ class PlanGame(object):
 
     def start_game(self):
         print("游戏开始...")
-        self.__bgm()
         while True:
             #   设置刷新帧率
             self.clock.tick(FRAME_PER_SECOND)
@@ -100,6 +100,8 @@ class PlanGame(object):
                     enemies.destroied()
                 for enemies_elite in self.enemy_elite_group.sprites():
                     enemies_elite.destroied()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                self.__init__()
 
         #   使用键盘提供的方法获取键盘按键 - 按键元组
         if key_press[pygame.K_RIGHT] or key_press[pygame.K_d]:
@@ -182,6 +184,12 @@ class PlanGame(object):
         #   设置文本
         self.text_font = pygame.font.SysFont("comicsansms", 80)
         self.pause_text = self.text_font.render("PAUSE", False, (0, 0, 0))
+
+        self.pause_image = pygame.image.load(PAUSE_IMAGE)
+        # self.pause_image_rect = self.pause_image.get_rect()
+        # self.pause_image_rect.centrex = SCREEN_RECT.centerx
+        # self.pause_image_rect.centrey = SCREEN_RECT.centery
+        self.screen.blit(self.pause_image, (SCREEN_RECT.centerx - 150, SCREEN_RECT.centery))
 
         while self.pause:
             self.screen.blit(self.pause_text, (SCREEN_RECT.width / 2 - 130, SCREEN_RECT.height / 2 - 140))
