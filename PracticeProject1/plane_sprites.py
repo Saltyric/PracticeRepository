@@ -215,6 +215,11 @@ class Hero(PlaneSprite):
             self.rect.bottom = SCREEN_RECT.bottom
         elif self.rect.y < 350:
             self.rect.y = 350
+        #   位置自动调整
+        elif self.speed2 == 0 and self.rect.y < 500:
+            self.rect.y += 1
+        elif self.speed2 == 0 and 500 < self.rect.y < SCREEN_RECT.bottom:
+            self.rect.y -= 1
 
     def fire(self):
 
@@ -240,7 +245,7 @@ class Hero(PlaneSprite):
         pygame.time.set_timer(HERO_FIRE_EVENT, 150)
         bullet3 = Bullet()
         bullet3.rect.bottom = self.rect.y
-        bullet3.rect.centerx = self.rect.centerx
+        bullet3.rect.centerx = self.rect.centerx + random.randint(-10, 10)
 
         self.bullets.add(bullet3)
 

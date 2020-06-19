@@ -85,7 +85,8 @@ class PlanGame(object):
                 self.hero.fire()
             elif event.type == ENEMY_FIRE_EVENT:
                 for each in self.enemy_elite_group:
-                    self.enemy_bullet_group.add(EnemyBullet(each.rect.centerx, each.rect.bottom))
+                    for i in (0, 15, 30):
+                        self.enemy_bullet_group.add(EnemyBullet(each.rect.centerx, each.rect.bottom+i))
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 self.pause = True
                 self.__game_pause()
@@ -120,12 +121,6 @@ class PlanGame(object):
         # 判断英雄是否已经被销毁，如果是，游戏结束
         if self.hero.can_destroied:
             PlanGame.__game_over()
-
-        #   位置自动调整
-        if self.hero.speed2 == 0 and self.hero.rect.y < 500:
-            self.hero.rect.y += 1
-        elif self.hero.speed2 == 0 and 500 < self.hero.rect.y < SCREEN_RECT.bottom:
-            self.hero.rect.y -= 1
 
     def __check_collide(self):
         #   子弹摧毁敌机
