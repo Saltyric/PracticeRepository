@@ -186,10 +186,10 @@ class PlanGame(object):
         self.pause_text = self.text_font.render("PAUSE", False, (0, 0, 0))
 
         self.pause_image = pygame.image.load(PAUSE_IMAGE)
-        # self.pause_image_rect = self.pause_image.get_rect()
-        # self.pause_image_rect.centrex = SCREEN_RECT.centerx
-        # self.pause_image_rect.centrey = SCREEN_RECT.centery
-        self.screen.blit(self.pause_image, (SCREEN_RECT.centerx - 150, SCREEN_RECT.centery))
+        self.pause_image_rect = self.pause_image.get_rect()
+        self.pause_image_rect.centerx = SCREEN_RECT.centerx
+        self.pause_image_rect.centery = SCREEN_RECT.centery
+        self.screen.blit(self.pause_image, (self.pause_image_rect.x, self.pause_image_rect.y))
 
         while self.pause:
             self.screen.blit(self.pause_text, (SCREEN_RECT.width / 2 - 130, SCREEN_RECT.height / 2 - 140))
