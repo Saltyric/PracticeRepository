@@ -180,6 +180,7 @@ class PlanGame(object):
 
     def __game_pause(self):
         #   暂停功能实现
+        pygame.mixer.music.set_volume(0.2)
 
         #   设置文本
         self.text_font = pygame.font.SysFont("comicsansms", 80)
@@ -196,8 +197,6 @@ class PlanGame(object):
             pygame.display.update()
 
             for event in pygame.event.get():
-
-                pygame.mixer.music.set_volume(0.2)
 
                 if event.type == pygame.QUIT:
                     self.__game_over()
