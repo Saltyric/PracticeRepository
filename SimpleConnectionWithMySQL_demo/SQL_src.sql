@@ -1,6 +1,6 @@
--- CREATE DATABASE test CHARSET=utf8;
+-- CREATE DATABASE jing_dong CHARSET=utf8;
 
-use test;
+use jing_dong;
 
 CREATE TABLE if not exists goods(
 	id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
