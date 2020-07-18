@@ -1,6 +1,6 @@
 
-#***This is a simple demo for MySQL-Python connection***
-#***这是一个简单的使用python连接数据库的demo***
+# ***This is a simple demo for MySQL-Python connection***
+## ***这是一个简单的使用python连接数据库的demo***
 ----
 >___Authorized by Saltyric___  
 >**描述 Description**  
